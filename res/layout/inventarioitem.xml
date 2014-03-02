@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="45dp"
+    android:descendantFocusability="afterDescendants"
+    android:paddingBottom="@dimen/ISOL_Padding"
+    android:paddingLeft="@dimen/ISOL_Padding"
+    android:paddingRight="@dimen/ISOL_Padding"
+    android:paddingTop="@dimen/ISOL_Padding"
+    >
+
+    <TextView
+        android:id="@+id/itemDesc"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/qta"
+        android:gravity="center_vertical"
+        android:singleLine="true"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/qta"
+        android:layout_width="30dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:gravity="right|center_vertical"
+        android:layout_alignParentTop="true" />
+
+</RelativeLayout>

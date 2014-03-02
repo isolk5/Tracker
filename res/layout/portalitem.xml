@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="45dp"
+    android:descendantFocusability="afterDescendants"
+    android:paddingBottom="2dp"
+    android:paddingLeft="@dimen/ISOL_Padding"
+    android:paddingRight="@dimen/ISOL_Padding"
+    android:paddingTop="2dp" >
+
+    <TextView
+        android:id="@+id/portalName"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:layout_above="@+id/portalZone"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/imageCarica"
+        android:singleLine="true"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/portalZone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/imageCarica"
+        android:singleLine="true"
+        android:textSize="12sp" />
+
+    <ImageView
+        android:id="@+id/imageCarica"
+        android:layout_width="40dp"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/qta"
+        android:contentDescription="Stato carica"
+         />
+    
+    <TextView
+        android:id="@+id/qta"
+        android:layout_width="40dp"
+        android:layout_height="match_parent"
+        android:gravity="right"
+        android:textSize="16sp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true" />
+
+
+</RelativeLayout>

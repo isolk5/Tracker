@@ -1,0 +1,119 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/ISOL_Padding"
+    android:paddingLeft="@dimen/ISOL_Padding"
+    android:paddingRight="@dimen/ISOL_Padding"
+    android:paddingTop="@dimen/ISOL_Padding"
+    tools:context=".PortalDetailActivity" >
+
+    <TextView
+        android:id="@+id/portalName"
+        android:layout_width="match_parent"
+        android:layout_height="25dp" 
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:gravity="center_horizontal"
+        android:textStyle="bold" 
+        />
+
+    <TextView
+        android:id="@+id/portalZone"
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:layout_below="@+id/portalName"
+        android:gravity="center_horizontal"
+        android:paddingBottom="4dp"
+        />
+
+    <View
+        android:id="@+id/view1"
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/portalZone"
+        android:background="@android:color/darker_gray" 
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+     />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="180dp"
+        android:layout_height="40dp"
+        android:layout_alignLeft="@+id/view1"
+        android:layout_alignBottom="@+id/button1"
+        android:gravity="center_vertical"
+        android:layout_below="@+id/view1"
+        android:text="Chiavi possedute"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <EditText
+        android:id="@+id/qta"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/button1"
+        android:layout_toRightOf="@+id/textView1"
+        android:gravity="right"
+        android:ems="10"
+        android:inputType="number" >
+    </EditText>
+
+    <Button
+        android:id="@+id/button1"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/view1"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/portalZone"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:onClick="AggiornaClick"
+        android:text="Aggiorna"
+	 />
+
+        <View
+        android:id="@+id/view2"
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/qta"
+        android:background="@android:color/darker_gray" 
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        />
+    
+        <Button
+        android:id="@+id/buttonPossessori"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/view2"
+        android:layout_centerHorizontal="true"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:gravity="center_horizontal|center_vertical"
+        android:onClick="PossessoriClick"
+        android:text="Visualizza possessori"
+		/>
+        
+        <View
+        android:id="@+id/view3"
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/buttonPossessori"
+        android:background="@android:color/darker_gray" 
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        />
+    
+        <Button
+        android:id="@+id/buttonRicarica"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/view3"
+        android:layout_centerHorizontal="true"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:gravity="center_horizontal|center_vertical"
+        android:onClick="RicaricaClick"
+        android:text="Ho ricaricato il portale !"
+		/>
+</RelativeLayout>
