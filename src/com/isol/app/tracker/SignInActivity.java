@@ -21,6 +21,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.IntentSender.SendIntentException;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -48,6 +49,7 @@ public class SignInActivity extends Activity implements OnClickListener,
 //    private View mSignOutButton;
 //    private View mRevokeAccessButton;
     private ConnectionResult mConnectionResult;
+    private static final int REQUEST_CODE_RESOLVE_ERR = 9000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,13 +101,13 @@ public class SignInActivity extends Activity implements OnClickListener,
                     return;
                 }
 
-                try {
-                    mSignInStatus.setText(getString(R.string.signing_in_status));
-                    mConnectionResult.startResolutionForResult(this, REQUEST_CODE_SIGN_IN);
-                } catch (IntentSender.SendIntentException e) {
-                    // Fetch a new result to start.
+//                try {
+//                    mSignInStatus.setText(getString(R.string.signing_in_status));
+//                    mConnectionResult.startResolutionForResult(this, REQUEST_CODE_SIGN_IN);
+//                } catch (IntentSender.SendIntentException e) {
+//                    // Fetch a new result to start.
                     mPlusClient.connect();
-                }
+//                }
            	
               break;
 //            case R.id.sign_out_button:
@@ -142,18 +144,6 @@ public class SignInActivity extends Activity implements OnClickListener,
                 .setMessage(R.string.plus_generic_error)
                 .setCancelable(true)
                 .create();
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_CODE_SIGN_IN
-                || requestCode == REQUEST_CODE_GET_GOOGLE_PLAY_SERVICES) {
-            if (resultCode == RESULT_OK && !mPlusClient.isConnected()
-                    && !mPlusClient.isConnecting()) {
-                // This time, connect should succeed.
-                mPlusClient.connect();
-            }
-        }
     }
 
     @Override
@@ -199,12 +189,28 @@ public class SignInActivity extends Activity implements OnClickListener,
 
     @Override
     public void onConnectionFailed(ConnectionResult result) {
-        mConnectionResult = result;
-        updateButtons(false /* isSignedIn */);
+        if (result.hasResolution()) {
+           try {
+               mConnectionResult = result;
+               result.startResolutionForResult(this, REQUEST_CODE_RESOLVE_ERR);
+            } catch (SendIntentException e) {
+                mPlusClient.connect();
+            }
+        }
+        // Salva il risultato e risolvi l'errore di connessione al momento in cui un utente fa clic.
     }
 
 //    
-    private void updateButtons(boolean isSignedIn) {
+@Override
+protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	   super.onActivityResult(requestCode, resultCode, data);
+	   if (requestCode == REQUEST_CODE_RESOLVE_ERR  && resultCode == RESULT_OK) {
+            // This time, connect should succeed.
+            mPlusClient.connect();
+    }
+}
+
+ private void updateButtons(boolean isSignedIn) {
         if (isSignedIn) {
             mSignInButton.setVisibility(View.INVISIBLE);
 //            mSignOutButton.setEnabled(true);
