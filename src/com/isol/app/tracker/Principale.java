@@ -47,17 +47,6 @@ public class Principale extends FragmentActivity {
 		// Set up the ViewPager with the sections adapter.
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(mSectionsPagerAdapter);
-
-		//Recupero i settings
-		PreferenceManager.setDefaultValues(this, R.xml.app_settings, false);
-		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-		Constants.serverAddress = sharedPref.getString("pref_server","");
-		Constants.serverPort = Integer.valueOf(sharedPref.getString("pref_port", "80"));
-		if (Constants.serverPort == 80)
-			Constants.serviceURL = "http://" + Constants.serverAddress + "/Services/";
-		else
-			Constants.serviceURL = "http://" + Constants.serverAddress + ":" + Constants.serverPort + "/Services/";
-			
 		
 		// Recupero i dati dell'utente
 

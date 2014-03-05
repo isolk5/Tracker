@@ -33,6 +33,7 @@
     <string name="title_activity_portal_detail">Dettaglio Portale</string>
     <string name="title_activity_item_detail">Dettaglio Oggetto</string>
     <string name="title_activity_settings">Configurazione</string>
+    <string name="title_activity_agent_profile">Profilo Agente</string>
     <string name="hello_world">Hello world!</string>
 
 </resources>

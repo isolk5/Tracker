@@ -1,22 +1,38 @@
 package com.isol.app.tracker;
 
+import java.util.ArrayList;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.isol.app.tracker.PortaliFragment.InventarioItemModel;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class AgentProfileActivity extends Activity  {
+public class AgentProfileActivity extends Activity {
 
+	public Spinner spinnerZone;
+	public Spinner spinnerGruppi;
+	public TextView tvNickname;
+	public int personZone;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -24,125 +40,198 @@ public class AgentProfileActivity extends Activity  {
 		
 		//Recupero i dati del portale
 
-		TextView tvNickname = (TextView) this.findViewById(R.id.nickname);
-		Spinner spinnerZone = (Spinner) this.findViewById(R.id.spinnerZone);
-		Spinner spinnerGruppo = (Spinner) this.findViewById(R.id.spinnerGruppo);
+		tvNickname = (TextView) this.findViewById(R.id.nickname);
+		spinnerZone = (Spinner) this.findViewById(R.id.spinnerZone);
+		spinnerGruppi = (Spinner) this.findViewById(R.id.spinnerGruppi);
 		
 		MyApplication myapp = MyApplication.getInstance();
 		Intent intent = getIntent();		
-		int item_ID = intent.getIntExtra(Constants.PAR_ITEM_ID, 0);
+		this.setTitle("Profilo Agente");
+		boolean isFromSignin = intent.getBooleanExtra(Constants.PAR_FROM_SIGN_IN, true);
 		
+		//Recupero i settings
+		PreferenceManager.setDefaultValues(this, R.xml.app_settings, false);
+		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+		Constants.serverAddress = sharedPref.getString("pref_server","");
+		Constants.serverPort = Integer.valueOf(sharedPref.getString("pref_port", "80"));
+		if (Constants.serverPort == 80)
+			Constants.serviceURL = "http://" + Constants.serverAddress + "/Services/";
+		else
+			Constants.serviceURL = "http://" + Constants.serverAddress + ":" + Constants.serverPort + "/Services/";
+			
+		//Questa chiamata censisce l'agente nel DB se non ancora presente
 		JSONObject obj = Utilita
-				.getJSONObjectFromArray("JSONInterface.aspx?function=GetPortalDetail&groupID="
-						+ myapp.getGroupID() + "&itemID=" + item_ID + "&personID=" + myapp.getPersonID());
+				.getJSONObjectFromArray("JSONInterface.aspx?function=GetPersonByAccount&account="
+						+ myapp.getAccountName());
 
+		String nickname = "";
+		int GroupID = 0;
+		personZone = 0;
+		
 		try {
-			tvPortalName.setText(obj.getString("Item_Desc"));
-			tvPortalZone.setText(obj.getString("Portal_Zone"));
-			int iQta = obj.getInt("Qta");
-			edQta.setText(String.valueOf(iQta));
+			 nickname = obj.getString("Person_Nickname");
+			 GroupID = obj.getInt("Group_ID");
+			 personZone = obj.getInt("Person_Zone");		
+
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}	
 		
-//		edQta.setOnFocusChangeListener(new OnFocusChangeListener()
-//	    {
-//	        @Override
-//	        public void onFocusChange(View v, boolean hasFocus) 
-//	        {
-//	            if (hasFocus == true)
-//	            {
-//	            	EditText etxt = (EditText)v;
-//	            	etxt.setText("");
-//	            }
-//	        }
-//	    });
+		//Se gruppo e zona valorizzati e provengo dal signin, allora procedo con l'activity principale
+		if (GroupID != 0 && personZone != 0 && isFromSignin) {
+	    	Intent newIntent = new Intent(this, Principale.class);
+	    	startActivity(newIntent);
+	    	//Tolgo la history a questa activity
+	    	finish();
+		}
+		
+		tvNickname.setText(nickname);
+		
+		//Popolo lo spinner dei gruppi
+		JSONArray jArr = Utilita.getJSONArray("JSONInterface.aspx?function=GetGruppi");
+		ArrayList<GroupItemModel> theList = new ArrayList<GroupItemModel>();
+		int selectedIndex = 0;
+		
+		//Aggiunto elemento gruppo vuoto
+		GroupItemModel gim = new GroupItemModel();
+		gim.groupDesc = "";
+		gim.groupID = 0;
+		theList.add(gim);
 
-		edQta.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				
-	           	EditText etxt = (EditText)v;
-            	etxt.setText("");
+		for (int i = 0; i < jArr.length(); i++) {
+			JSONObject jObj;
+			try {
+				jObj = jArr.getJSONObject(i);
+				gim = new GroupItemModel();
+				gim.groupDesc = jObj.getString("Group_Desc");
+				gim.groupID = jObj.getInt("Group_ID");
+				theList.add(gim);
+				if (gim.groupID == GroupID) {
+					selectedIndex = i+1;
+				}
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
+		}
+		
+		ArrayAdapter<GroupItemModel> adap = new ArrayAdapter<GroupItemModel> (this, android.R.layout.simple_spinner_item, theList);
+		adap.setDropDownViewResource(android.R.layout.simple_spinner_item);
+		spinnerGruppi.setAdapter(adap);
+		spinnerGruppi.setSelection(selectedIndex);
+		
+		//Gestione della selezione
+		spinnerGruppi.setOnItemSelectedListener(new OnItemSelectedListener() {
+		public void onItemSelected(AdapterView<?> parent, View view, int pos,long id) {
+			
+			//Trovo l'item selezionato
+			GroupItemModel gim = (GroupItemModel)parent.getItemAtPosition(pos);
+			int GroupID = gim.groupID;
+			
+			//popolo lo spinner delle zone
+			JSONArray jArr = Utilita.getJSONArray("JSONInterface.aspx?function=GetZonesByGroup&groupID=" + GroupID);
+			ArrayList<ZoneItemModel> theZoneList = new ArrayList<ZoneItemModel>();
+			
+			//Aggiunto elemento gruppo vuoto
+			ZoneItemModel zim = new ZoneItemModel();
+			zim.zoneDesc = "";
+			zim.zoneID = 0;
+			theZoneList.add(zim);
+
+			int selectedIndex = 0;
+			for (int i = 0; i < jArr.length(); i++) {
+				JSONObject jObj;
+				try {
+					jObj = jArr.getJSONObject(i);
+					zim = new ZoneItemModel();
+					zim.zoneDesc = jObj.getString("Zone_Desc");
+					zim.zoneID = jObj.getInt("Zone_ID");
+					theZoneList.add(zim);
+					if (zim.zoneID == personZone) {
+						selectedIndex = i+1;
+					}
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+			ArrayAdapter<ZoneItemModel> adapZone = new ArrayAdapter<ZoneItemModel> (view.getContext(), android.R.layout.simple_spinner_item, theZoneList);
+			adapZone.setDropDownViewResource(android.R.layout.simple_spinner_item);
+			spinnerZone.setAdapter(adapZone);		
+			spinnerZone.setSelection(selectedIndex);
+		  }
+		
+		  @Override
+		  public void onNothingSelected(AdapterView<?> arg0) {
+			// TODO Auto-generated method stub
+		  }
+
 		});
-		
-}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.portal_detail, menu);
-		return true;
+					
 	}
 
-	public void PossessoriClick(View v) {
-	
-		Intent intent = getIntent();		
-		int item_ID = intent.getIntExtra(Constants.PAR_ITEM_ID, 0);
+	//Gestione dell'onclick sul bottone
+	public void ConfermaClick(View v) {
 
-		//Chiamo la user_item_List view
-		Intent newIntent = new Intent(this, User_Item_List.class);
-		newIntent.putExtra(Constants.PAR_ITEM_ID, item_ID);	
-		newIntent.putExtra(Constants.PAR_FLAG_ITEM_LOCATION, 2);	
-		startActivity(newIntent);
+		Context context = getApplicationContext();
+		int duration = Toast.LENGTH_LONG;
 
+		//Controllo se i campi sono popolati correttamente
+		if (tvNickname.getText().equals("")) {
+			CharSequence text = "ATTENZIONE - popolare il nome Agente";
+			Toast toast = Toast.makeText(context, text, duration);
+			toast.show();
+			return;
+		}
+		
+		GroupItemModel selGim = (GroupItemModel)spinnerGruppi.getSelectedItem();			
+		if (selGim.groupID==0) {
+			CharSequence text = "ATTENZIONE - selezionare un gruppo di appartenenza";
+			Toast toast = Toast.makeText(context, text, duration);
+			toast.show();
+			return;
+		}
+		
+		ZoneItemModel selZim = (ZoneItemModel)spinnerZone.getSelectedItem();	
+		if (selZim.zoneID==0) {
+			CharSequence text = "ATTENZIONE - selezionare una zona di appartenenza";
+			Toast toast = Toast.makeText(context, text, duration);
+			toast.show();
+			return;
+		}
+		
+		//Memorizzo i dati selezionati
+		MyApplication myapp = MyApplication.getInstance();
+		Utilita.getJSONObjectFromArray("JSONInterface.aspx?function=AddPerson&groupID="
+				+ selGim.groupID + "&zoneID=" + selZim.zoneID + "&nickname=" + tvNickname.getText() + "&accountName=" + myapp.getAccountName());
+
+		//A questo punto passo all'activity principale
+		Intent newIntent = new Intent(this, Principale.class);
+		startActivityForResult(newIntent,0);
+		finish();
+		
 	}
 	
-	public void RicaricaClick(View v) {
+	public class GroupItemModel {
+		public String groupDesc; 	
+		public int groupID;
 		
-		MyApplication myapp = MyApplication.getInstance();
-		Intent intent = getIntent();		
-		int item_ID = intent.getIntExtra(Constants.PAR_ITEM_ID, 0);
+	     @Override
+	     public String toString() {          
+	         return  groupDesc;
+	     }
 
-		Utilita.getJSONObjectFromArray("JSONInterface.aspx?function=UpdateCharge&groupID="
-						+ myapp.getGroupID() + "&itemID=" + item_ID);
+	}
+	public class ZoneItemModel {
+		public String zoneDesc; 	
+		public int zoneID;
 		
-		Context context = getApplicationContext();
-		CharSequence text = "Il portale è stato marcato come RICARICATO !";
-		int duration = Toast.LENGTH_SHORT;
-
-		Toast toast = Toast.makeText(context, text, duration);
-		toast.show();
-		
-        //Metto la nuova quantita nell'itemt per l'ActivityResult
-        intent.putExtra(Constants.PAR_ITEM_RECHARGED, "true");
-        setResult(RESULT_OK, intent);
-     }
-	
-	public void AggiornaClick(View v) {
-		// TODO Auto-generated method stub
-		
-		EditText edQta = (EditText) this.findViewById(R.id.qta);
-		String sQta = edQta.getText().toString();
-		if (sQta=="")
-			sQta="0";
-
-		MyApplication myapp = MyApplication.getInstance();
-		Intent intent = getIntent();		
-		int item_ID = intent.getIntExtra(Constants.PAR_ITEM_ID, 0);
-
-		Utilita.getJSONObjectFromArray("JSONInterface.aspx?function=Update&groupID="
-						+ myapp.getGroupID() + "&itemID=" + item_ID + "&personID=" + myapp.getPersonID()
-						+ "&FlagItemLocation=2&qta=" + sQta);
-		
-		Context context = getApplicationContext();
-		CharSequence text = "Aggiornamento effettuato!";
-		int duration = Toast.LENGTH_SHORT;
-
-		Toast toast = Toast.makeText(context, text, duration);
-		toast.show();
-		
-		//Nascondo l'eventuale tastiera
-		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(edQta.getWindowToken(), 0);
-
-        //Metto la nuova quantita nell'itemt per l'ActivityResult
-        intent.putExtra(Constants.PAR_ITEM_QTA, Integer.valueOf(sQta));
-        setResult(RESULT_OK, intent);
+	     @Override
+	     public String toString() {          
+	         return  zoneDesc;
+	     }
 	}
 
 }

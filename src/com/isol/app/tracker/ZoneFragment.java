@@ -7,7 +7,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
@@ -18,8 +17,6 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import com.isol.app.tracker.dummy.DummyContent;
 
 /**
  * A fragment representing a list of Items.
@@ -92,12 +89,12 @@ public class ZoneFragment extends ListFragment {
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
 
-		if (null != mListener) {
-			// Notify the active callbacks interface (the activity, if the
-			// fragment is attached to one) that an item has been selected.
-			mListener
-					.onFragmentInteraction(DummyContent.ITEMS.get(position).id);
-		}
+//		if (null != mListener) {
+//			// Notify the active callbacks interface (the activity, if the
+//			// fragment is attached to one) that an item has been selected.
+//			mListener
+//					.onFragmentInteraction(DummyContent.ITEMS.get(position).id);
+//		}
 	}
 
 	

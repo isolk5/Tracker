@@ -16,10 +16,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
-
-import com.isol.app.tracker.dummy.DummyContent;
 
 /**
  * A fragment representing a list of Items.
@@ -98,18 +95,18 @@ public class PortaliFragment extends ListFragment {
 	}
 
 	
-	@Override
-	public void onListItemClick(ListView l, View v, int position, long id) {
-		super.onListItemClick(l, v, position, id);
-
-		if (null != mListener) {
-			// Notify the active callbacks interface (the activity, if the
-			// fragment is attached to one) that an item has been selected.
-			mListener
-					.onFragmentInteraction(DummyContent.ITEMS.get(position).id);
-		}
-		
-	}
+//	@Override
+//	public void onListItemClick(ListView l, View v, int position, long id) {
+//		super.onListItemClick(l, v, position, id);
+//
+//		if (null != mListener) {
+//			// Notify the active callbacks interface (the activity, if the
+//			// fragment is attached to one) that an item has been selected.
+//			mListener
+//					.onFragmentInteraction(DummyContent.ITEMS.get(position).id);
+//		}
+//		
+//	}
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {

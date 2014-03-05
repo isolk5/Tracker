@@ -175,8 +175,11 @@ public class SignInActivity extends Activity implements OnClickListener,
 	    	
     	MyApplication myapp = MyApplication.getInstance();
         myapp.setAccountName(mPlusClient.getAccountName());
-    	Intent newIntent = new Intent(this, Principale.class);
+    	Intent newIntent = new Intent(this, AgentProfileActivity.class);
+    	newIntent.putExtra(Constants.PAR_FROM_SIGN_IN, true);
     	startActivity(newIntent);
+    	//Tolgo la history a questa activity
+    	finish();
        }
     }
 

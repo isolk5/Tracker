@@ -10,6 +10,7 @@ public class Constants {
 	final static String PAR_FLAG_ITEM_LOCATION = "com.isol.app.tracker.FlagItemLocation";
 	final static String PAR_FUNCTION = "com.isol.app.tracker.Function";
 	final static String PAR_ARRAY_INDEX = "com.isol.app.tracker.ArrayIndex";
+	final static String PAR_FROM_SIGN_IN = "com.isol.app.tracker.FromSignIn";
 	
     public static String serverAddress;
     public static int serverPort;
