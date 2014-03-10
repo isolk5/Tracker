@@ -54,6 +54,12 @@ public class AgentProfileActivity extends Activity {
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 		Constants.serverAddress = sharedPref.getString("pref_server","");
 		Constants.serverPort = Integer.valueOf(sharedPref.getString("pref_port", "80"));
+		
+		//Se debugger attivo, allora metto server di test
+		boolean isBeingDebugged = android.os.Debug.isDebuggerConnected();
+		if (isBeingDebugged) 
+			Constants.serverAddress = "192.168.1.113/ITracker";
+		
 		if (Constants.serverPort == 80)
 			Constants.serviceURL = "http://" + Constants.serverAddress + "/Services/";
 		else
@@ -66,12 +72,10 @@ public class AgentProfileActivity extends Activity {
 
 		String nickname = "";
 		int GroupID = 0;
-		personZone = 0;
 		
 		try {
 			 nickname = obj.getString("Person_Nickname");
 			 GroupID = obj.getInt("Group_ID");
-			 personZone = obj.getInt("Person_Zone");		
 
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
@@ -79,7 +83,7 @@ public class AgentProfileActivity extends Activity {
 		}	
 		
 		//Se gruppo e zona valorizzati e provengo dal signin, allora procedo con l'activity principale
-		if (GroupID != 0 && personZone != 0 && isFromSignin) {
+		if (GroupID != 0 && isFromSignin) {
 	    	Intent newIntent = new Intent(this, Principale.class);
 	    	startActivity(newIntent);
 	    	//Tolgo la history a questa activity

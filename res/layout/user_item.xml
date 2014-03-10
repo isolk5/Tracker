@@ -10,33 +10,21 @@
 
     <TextView
         android:id="@+id/textUser"
-        android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:layout_above="@+id/textDummy"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
         android:layout_toLeftOf="@+id/textQta"
+        android:gravity="center_vertical"
         android:singleLine="true"
         android:textSize="14sp"
         android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/textDummy"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_toLeftOf="@+id/textQta"
-        android:singleLine="true"
-        android:textSize="12sp" />
-
+ 
     <TextView
         android:id="@+id/textQta"
         android:layout_width="40dp"
         android:layout_height="match_parent"
-        android:gravity="right"
+        android:gravity="right|center_vertical"
         android:textSize="16sp"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true" />
+        android:layout_alignParentRight="true" />
 
 </RelativeLayout>

@@ -9,44 +9,78 @@
     android:paddingTop="2dp" >
 
     <TextView
+        android:id="@+id/qta"
+        android:layout_width="35dp"
+        android:layout_height="26dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:gravity="center"
+        android:background="#dadada"
+        android:textSize="16sp" />
+    
+     <ImageView
+         android:id="@+id/imageChiave"
+         android:layout_width="35dp"
+         android:layout_height="wrap_content"
+         android:layout_alignParentBottom="true"
+         android:layout_alignParentLeft="true"
+         android:layout_below="@+id/qta"
+         android:paddingLeft="2dp"
+         android:paddingRight="2dp"
+         android:background="#dadada"
+         android:contentDescription="Stato carica" />
+    
+    <ImageView
+        android:id="@+id/imageCarica"
+        android:layout_width="20dp"
+        android:layout_height="match_parent"
+        android:layout_toRightOf="@+id/qta"
+        android:layout_alignParentBottom="true"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
+        android:background="#dadada"
+        android:contentDescription="Stato carica" />
+
+     <TextView
         android:id="@+id/portalName"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="20dp"
         android:layout_above="@+id/portalZone"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/imageCarica"
+        android:layout_toRightOf="@+id/imageCarica"
+        android:layout_toLeftOf="@+id/imageNote"
         android:singleLine="true"
         android:textSize="14sp"
+        android:paddingLeft="4dp"
         android:textStyle="bold" />
 
     <TextView
         android:id="@+id/portalZone"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_toLeftOf="@+id/imageCarica"
+        android:layout_toRightOf="@+id/imageCarica"
+        android:layout_toLeftOf="@+id/imageNote"
         android:singleLine="true"
+        android:paddingLeft="4dp"
         android:textSize="12sp" />
 
     <ImageView
-        android:id="@+id/imageCarica"
-        android:layout_width="40dp"
-        android:layout_height="match_parent"
-        android:layout_centerVertical="true"
-        android:layout_toLeftOf="@+id/qta"
-        android:contentDescription="Stato carica"
-         />
-    
-    <TextView
-        android:id="@+id/qta"
-        android:layout_width="40dp"
-        android:layout_height="match_parent"
-        android:gravity="right"
-        android:textSize="16sp"
+        android:id="@+id/imageNote"
+        android:layout_width="30dp"
+        android:layout_height="19dp"
+        android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true" />
-
-
+        android:contentDescription="Stato carica" />
+    
+    <ImageView
+        android:id="@+id/imageRating"
+        android:layout_width="30dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/imageNote"
+        android:contentDescription="Importanza" />
+    
+    
 </RelativeLayout>

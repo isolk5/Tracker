@@ -7,7 +7,7 @@ public class MyApplication extends Application {
 	private int PersonID;
 	private String accountName;
 	private String nickName;
-	private int personZone;
+	//private int personZone;
 	
 	public int getPersonID() {
 		return PersonID;
@@ -52,11 +52,11 @@ public class MyApplication extends Application {
 		return instance; 
 	}
 
-	public int getPersonZone() {
-		return personZone;
-	}
-
-	public void setPersonZone(int personZone) {
-		this.personZone = personZone;
-	}
+//	public int getPersonZone() {
+//		return personZone;
+//	}
+//
+//	public void setPersonZone(int personZone) {
+//		this.personZone = personZone;
+//	}
 }

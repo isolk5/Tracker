@@ -27,8 +27,6 @@ import android.widget.TextView;
  */
 public class PortaliFragment extends ListFragment {
 
-	private OnFragmentInteractionListener mListener;
-
 	/**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
 	 * fragment (e.g. upon screen orientation changes).
@@ -41,9 +39,8 @@ public class PortaliFragment extends ListFragment {
 		super.onCreate(savedInstanceState);
 
 		final ArrayList<InventarioItemModel> theList =getArrayList();
-
 		setListAdapter(new MySimpleArrayAdapter(getActivity(), theList));
-
+		
 	}
 
 
@@ -71,6 +68,9 @@ public class PortaliFragment extends ListFragment {
 				iim.Flag_Item_Location = jObj.getInt("Flag_Item_Location");
 				iim.Portal_Zone = jObj.getString("Portal_Zone");
 				iim.statoCarica=jObj.getInt("ChargeState");
+				iim.rating = jObj.getInt("Portal_Rating");
+			    iim.note=jObj.getBoolean("Portal_Notes_Presence");
+			    
 				theList.add(iim);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
@@ -85,53 +85,62 @@ public class PortaliFragment extends ListFragment {
 	@Override
 	public void onDetach() {
 		super.onDetach();
-		mListener = null;
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
+		Principale mainActivity = (Principale)getActivity();
+		if (mainActivity.flagUpdatePortalData) {
+			mainActivity.flagUpdatePortalData=false;
+			ArrayList<InventarioItemModel> theList = getArrayList();
+			MySimpleArrayAdapter theAdapter = (MySimpleArrayAdapter)getListAdapter();
+			theAdapter.clear();
+			theAdapter.addAll(theList);
+			theAdapter.notifyDataSetChanged();
+		}
 		
 	}
 
-	
-//	@Override
-//	public void onListItemClick(ListView l, View v, int position, long id) {
-//		super.onListItemClick(l, v, position, id);
-//
-//		if (null != mListener) {
-//			// Notify the active callbacks interface (the activity, if the
-//			// fragment is attached to one) that an item has been selected.
-//			mListener
-//					.onFragmentInteraction(DummyContent.ITEMS.get(position).id);
-//		}
-//		
+//	public void ricaricaDati(Context context) {
+//		final ArrayList<InventarioItemModel> theList = getArrayList();
+//		MySimpleArrayAdapter theAdapter = (MySimpleArrayAdapter)getListAdapter();
+//		theAdapter.replaceData(theList);
+//		theAdapter.notifyDataSetChanged();
 //	}
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-	        // Make sure the request was successful
-	        if (resultCode == getActivity().RESULT_OK) {  
-	        	
-	        	//Verifico se si tratta di una ricarica
-	        	String ricarica = data.getStringExtra(Constants.PAR_ITEM_RECHARGED);
-	        	if (ricarica == null) {
-	        		
-		        	//aggiorno la quantita' come modificata nella activity di dettaglio
-		        	int theQta = data.getIntExtra(Constants.PAR_ITEM_QTA, 0);
-		        	int theIndex = data.getIntExtra(Constants.PAR_ARRAY_INDEX,-1);
-		        	MySimpleArrayAdapter theAdapter = (MySimpleArrayAdapter)getListAdapter();
-		        	theAdapter.getItem(theIndex).quantita=theQta;
-		        	theAdapter.notifyDataSetChanged();
-		        	
+        // Make sure the request was successful
+        if (resultCode == getActivity().RESULT_OK) {  
+        	
+        	//Verifico se si tratta di una ricarica
+        	String ricarica = data.getStringExtra(Constants.PAR_ITEM_RECHARGED);
+        	if (ricarica == null) {
+        		
+	        	//aggiorno la quantita' come modificata nella activity di dettaglio
+	        	int theQta = data.getIntExtra(Constants.PAR_ITEM_QTA, 0);
+	        	String note = data.getStringExtra(Constants.PAR_ITEM_NOTE);
+	        	int stato = data.getIntExtra(Constants.PAR_ITEM_STATO, 0);
+	        	int theIndex = data.getIntExtra(Constants.PAR_ARRAY_INDEX,-1);
+	        	MySimpleArrayAdapter theAdapter = (MySimpleArrayAdapter)getListAdapter();
+	        	theAdapter.getItem(theIndex).quantita=theQta;
+	        	theAdapter.getItem(theIndex).rating=stato;
+	        	if (note.trim().equals("")) {
+	        		theAdapter.getItem(theIndex).note=false;
 	        	} else {
-	        		
-		        	int theIndex = data.getIntExtra(Constants.PAR_ARRAY_INDEX,-1);
-		        	MySimpleArrayAdapter theAdapter = (MySimpleArrayAdapter)getListAdapter();
-		        	theAdapter.getItem(theIndex).statoCarica=4;
-		        	theAdapter.notifyDataSetChanged();
+	        		theAdapter.getItem(theIndex).note=true;
 	        	}
-	        }
+	        	theAdapter.notifyDataSetChanged();
+	        	        		
+        	} else {
+        		
+	        	int theIndex = data.getIntExtra(Constants.PAR_ARRAY_INDEX,-1);
+	        	MySimpleArrayAdapter theAdapter = (MySimpleArrayAdapter)getListAdapter();
+	        	theAdapter.getItem(theIndex).statoCarica=4;
+	        	theAdapter.notifyDataSetChanged();
+        	}
+        }
 	}
 	
 	
@@ -152,7 +161,7 @@ public class PortaliFragment extends ListFragment {
 	public class MySimpleArrayAdapter extends ArrayAdapter<InventarioItemModel> {
 		
 		private final Context context;
-		private final ArrayList<InventarioItemModel> values;
+		private ArrayList<InventarioItemModel> values;
 
 		public MySimpleArrayAdapter(Context context,
 				ArrayList<InventarioItemModel> values) {
@@ -161,6 +170,7 @@ public class PortaliFragment extends ListFragment {
 			this.values = values;
 		}
 
+	
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 
@@ -181,12 +191,22 @@ public class PortaliFragment extends ListFragment {
 						.findViewById(R.id.qta);
 				ImageView imStatoCarica = (ImageView) convertView
 						.findViewById(R.id.imageCarica);
+				ImageView imChiave = (ImageView) convertView
+						.findViewById(R.id.imageChiave);
+				ImageView imNote = (ImageView) convertView
+						.findViewById(R.id.imageNote);
+				ImageView imRating = (ImageView) convertView
+						.findViewById(R.id.imageRating);
 				viewHolder = new ViewHolderItem();
 				viewHolder.portalName = tvName;
 				viewHolder.portalZone = tvZone;
 				viewHolder.qta = tvQta;
 				viewHolder.FlagItemLocation = invItem.Flag_Item_Location;
 				viewHolder.imgStatoCarica = imStatoCarica;
+				viewHolder.imgChiave = imChiave;
+				viewHolder.imgNote = imNote;
+				viewHolder.imgRating = imRating;
+				
 				convertView.setTag(viewHolder);
 
 			} else {
@@ -213,9 +233,30 @@ public class PortaliFragment extends ListFragment {
 					imageResId = R.drawable.pila4;
 				} 
 				
-				if (invItem.quantita > 0) {
+				if (invItem.rating > 0) {
 					viewHolder.imgStatoCarica.setImageResource(imageResId);	
 				}
+
+				viewHolder.imgChiave.setImageResource(R.drawable.chiave);
+				
+				if (invItem.note) {
+					viewHolder.imgNote.setImageResource(R.drawable.note);
+				} else {
+					viewHolder.imgNote.setImageResource(-1);					
+				}
+				
+				int imageRatingID = -1;
+				if (invItem.rating == 0) {
+					imageRatingID = R.drawable.rating0;
+				} else if (invItem.rating == 1) {
+					imageRatingID = R.drawable.rating1;
+				} else if (invItem.rating == 2) {
+					imageRatingID = R.drawable.rating2;
+				} else if (invItem.rating == 3) {
+					imageRatingID = R.drawable.rating3;
+				} 
+				viewHolder.imgRating.setImageResource(imageRatingID);
+				
 			}
 
 			convertView.setId(position);
@@ -243,10 +284,12 @@ public class PortaliFragment extends ListFragment {
 		public String descrizione; 	
 		public String descrizioneTipo;
 		public String Portal_Zone;
+		public boolean note;
 		public int quantita;
 		public int item_id;
 		public int Flag_Item_Location;
 		public int statoCarica;
+		public int rating;
 	}
 
 	public class InventarioModel {
@@ -258,6 +301,9 @@ public class PortaliFragment extends ListFragment {
 		TextView portalZone;
 		TextView qta;
 		ImageView imgStatoCarica;
+		ImageView imgChiave;
+		ImageView imgNote;
+		ImageView imgRating;
 		int FlagItemLocation;
 	}
 

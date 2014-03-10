@@ -1,23 +1,27 @@
 package com.isol.app.tracker;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.ListFragment;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class Principale extends FragmentActivity {
+import com.isol.app.tracker.PortaliFragment.InventarioItemModel;
+import com.isol.app.tracker.PortaliFragment.MySimpleArrayAdapter;
+import com.isol.app.tracker.ZoneFragment.ZoneListener;
+
+public class Principale extends FragmentActivity implements ZoneListener {
 
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} tht will provide
@@ -28,7 +32,8 @@ public class Principale extends FragmentActivity {
 	 * {@link android.support.v4.app.FragmentStatePagerAdapter}.
 	 */
 	SectionsPagerAdapter mSectionsPagerAdapter;
-
+	boolean flagUpdatePortalData = false;
+	
 	/**
 	 * The {@link ViewPager} that will host the section contents.
 	 */
@@ -61,12 +66,12 @@ public class Principale extends FragmentActivity {
 			nickname = obj.getString("Person_Nickname");
 			int GroupID = obj.getInt("Group_ID");
 			int PersonID = obj.getInt("Person_ID");
-			int PersonZone = obj.getInt("Person_Zone");
+//			int PersonZone = obj.getInt("Person_Zone");
 			
 			myapp.setGroupID(GroupID);
 			myapp.setPersonID(PersonID);
 			myapp.setNickName(nickname);
-			myapp.setPersonZone(PersonZone);
+//			myapp.setPersonZone(PersonZone);
 			
 			getActionBar().setTitle("Tracker di " + myapp.getNickName());
 
@@ -104,9 +109,27 @@ public class Principale extends FragmentActivity {
 	    		finish();
 	            return false;
 	            
+	        case R.id.action_new_portal:
+	        	
+	    		//chiamo l'activity di Sign In richiedendo il SignOut
+	    		Intent intentNewPortal = new Intent(this, NewPortalActivity.class);
+	    		startActivityForResult(intentNewPortal,0);
+	            return false;
+
 	        default:
 	            return super.onOptionsItemSelected(item);
 	    }
+	}
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+	    // Make sure the request was successful
+        if (resultCode == RESULT_OK) {  
+        	String azione = data.getStringExtra(Constants.PAR_PORTAL_ADDED);
+        	if (azione.equals("true")) {
+        		flagUpdatePortalData = true;
+        	}
+        }
 	}
 	
 	/**
@@ -157,5 +180,11 @@ public class Principale extends FragmentActivity {
 			}
 			return null;
 		}
+	}
+
+	@Override
+	public void onZoneSelectedListener(int position) {
+		// Devo refreshare la lista dei portali associati
+		flagUpdatePortalData=true;
 	}
 }

@@ -6,6 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -17,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * A fragment representing a list of Items.
@@ -27,14 +29,33 @@ import android.widget.TextView;
  */
 public class ZoneFragment extends ListFragment {
 
-	private OnFragmentInteractionListener mListener;
-
+	private ZoneListener mCallback = null;
 	/**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
 	 * fragment (e.g. upon screen orientation changes).
 	 */
 	public ZoneFragment() {
 	}
+
+    // Container Activity must implement this interface
+	//Interfaccia per modificare la lista portali quando si seleziona/deseleziona una zona
+    public interface ZoneListener {
+        public void onZoneSelectedListener(int position);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        
+        // This makes sure that the container activity has implemented
+        // the callback interface. If not, it throws an exception
+        try {
+            mCallback = (ZoneListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement ZoneListener");
+        }
+    }
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -57,6 +78,7 @@ public class ZoneFragment extends ListFragment {
 				zim.zoneID = jObj.getInt("Zone_ID");
 				zim.zoneDesc = jObj.getString("Zone_Desc");
 				zim.zoneAssociated = jObj.getString("Zone_Associated").equals("true")?true:false;
+				zim.isResponsible = jObj.getBoolean("Flag_Responsible");
 				theList.add(zim);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
@@ -82,7 +104,6 @@ public class ZoneFragment extends ListFragment {
 	@Override
 	public void onDetach() {
 		super.onDetach();
-		mListener = null;
 	}
 
 	@Override
@@ -98,30 +119,15 @@ public class ZoneFragment extends ListFragment {
 	}
 
 	
-	/**
-	 * This interface must be implemented by activities that contain this
-	 * fragment to allow an interaction in this fragment to be communicated to
-	 * the activity and potentially other fragments contained in that activity.
-	 * <p>
-	 * See the Android Training lesson <a href=
-	 * "http://developer.android.com/training/basics/fragments/communicating.html"
-	 * >Communicating with Other Fragments</a> for more information.
-	 */
-	public interface OnFragmentInteractionListener {
-		// TODO: Update argument type and name
-		public void onFragmentInteraction(String id);
-	}
-
 	public class MySimpleArrayAdapter extends ArrayAdapter<ZoneItemModel>  {
 		
 		private final Context context;
 		private final ArrayList<ZoneItemModel> values;
-
-		public MySimpleArrayAdapter(Context context,
-				ArrayList<ZoneItemModel> values) {
-			super(context, R.layout.zone_item, values);
-			this.context = context;
-			this.values = values;
+		
+		public MySimpleArrayAdapter(Context aContext, ArrayList<ZoneItemModel> aValues) {
+			super(aContext, R.layout.zone_item, aValues);
+			this.context = aContext;
+			this.values = aValues;
 		}
 
 		@Override
@@ -152,10 +158,10 @@ public class ZoneFragment extends ListFragment {
 			viewHolder.zoneDesc.setText(invItem.zoneDesc);
 			viewHolder.cbZona.setChecked(invItem.zoneAssociated);
 			
-			//La zona di competenza non puo' essere tolta
-			MyApplication myapp = MyApplication.getInstance();
-			if (myapp.getPersonZone()==invItem.zoneID) {
+			//Le zone di competenza non possono essere tolte
+			if (invItem.isResponsible) {
 				viewHolder.cbZona.setEnabled(false);
+				viewHolder.zoneDesc.setText(invItem.zoneDesc + " (responsabile)");
 			}
 			
 			viewHolder.cbZona.setId(position);			
@@ -181,6 +187,15 @@ public class ZoneFragment extends ListFragment {
 										+ myapp.getGroupID() + "&personID=" + myapp.getPersonID() + "&zoneID=" + zim.zoneID);
 						
 					}
+					
+//					Context context = getApplicationContext();
+					CharSequence text = "L'elenco dei tuoi portali è stato aggiornato !";
+					int duration = Toast.LENGTH_SHORT;
+
+					Toast toast = Toast.makeText(context, text, duration);
+					toast.show();
+					
+					mCallback.onZoneSelectedListener(position);
 				}
 			});
 			
@@ -193,6 +208,7 @@ public class ZoneFragment extends ListFragment {
 		public Boolean zoneAssociated;
 		public String zoneDesc;
 		public int zoneID;
+		public boolean isResponsible;
 	}
 
 	public class InventarioModel {

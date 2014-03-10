@@ -188,6 +188,19 @@ public class Utilita {
     	}
    }
 
+    public static void JSONAction(String parms)
+    {
+    	try {
+    		
+		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+		.permitAll().build();
+		StrictMode.setThreadPolicy(policy);
+    	String res = getHttpData(Constants.serviceURL + parms);
+    	} catch  (Exception ex) {
+    		
+    	}
+   }
+
     public static String getHttpData(String url) throws IOException, MalformedURLException
     {
     	HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();

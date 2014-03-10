@@ -11,109 +11,144 @@
     <TextView
         android:id="@+id/portalName"
         android:layout_width="match_parent"
-        android:layout_height="25dp" 
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_height="25dp"
         android:gravity="center_horizontal"
-        android:textStyle="bold" 
-        />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/portalZone"
         android:layout_width="match_parent"
-        android:layout_height="25dp"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/portalName"
         android:gravity="center_horizontal"
-        android:paddingBottom="4dp"
-        />
+        android:paddingBottom="4dp" />
 
     <View
         android:id="@+id/view1"
         android:layout_width="fill_parent"
         android:layout_height="1dp"
         android:layout_below="@+id/portalZone"
-        android:background="@android:color/darker_gray" 
-        android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
-     />
+        android:layout_marginTop="10dp"
+        android:background="@android:color/darker_gray" />
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="180dp"
-        android:layout_height="40dp"
-        android:layout_alignLeft="@+id/view1"
-        android:layout_alignBottom="@+id/button1"
-        android:gravity="center_vertical"
-        android:layout_below="@+id/view1"
-        android:text="Chiavi possedute"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
-
-    <EditText
-        android:id="@+id/qta"
-        android:layout_width="60dp"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/button1"
-        android:layout_toRightOf="@+id/textView1"
-        android:gravity="right"
-        android:ems="10"
-        android:inputType="number" >
-    </EditText>
-
-    <Button
-        android:id="@+id/button1"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/view1"
-        android:layout_alignParentRight="true"
-        android:layout_below="@id/portalZone"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:onClick="AggiornaClick"
-        android:text="Aggiorna"
-	 />
-
-        <View
+    <View
         android:id="@+id/view2"
         android:layout_width="fill_parent"
         android:layout_height="1dp"
-        android:layout_below="@+id/qta"
-        android:background="@android:color/darker_gray" 
-        android:layout_marginTop="10dp"
+        android:layout_below="@+id/viewQta"
         android:layout_marginBottom="10dp"
-        />
-    
-        <Button
-        android:id="@+id/buttonPossessori"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/view2"
-        android:layout_centerHorizontal="true"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:gravity="center_horizontal|center_vertical"
-        android:onClick="PossessoriClick"
-        android:text="Visualizza possessori"
-		/>
-        
-        <View
+        android:layout_marginTop="10dp"
+        android:background="@android:color/darker_gray" />
+
+    <View
         android:id="@+id/view3"
         android:layout_width="fill_parent"
         android:layout_height="1dp"
         android:layout_below="@+id/buttonPossessori"
-        android:background="@android:color/darker_gray" 
-        android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
-        />
-    
-        <Button
+        android:layout_marginTop="10dp"
+        android:background="@android:color/darker_gray" />
+
+    <Button
         android:id="@+id/buttonRicarica"
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/view3"
-        android:layout_centerHorizontal="true"
-        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_alignParentBottom="true"
+        android:layout_alignRight="@+id/view3"
+        android:layout_marginBottom="15dp"
         android:gravity="center_horizontal|center_vertical"
         android:onClick="RicaricaClick"
-        android:text="Ho ricaricato il portale !"
-		/>
+        android:text="Portale Ricaricato"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <Button
+        android:id="@+id/buttonPossessori"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/buttonRicarica"
+        android:layout_alignBottom="@+id/buttonRicarica"
+        android:layout_alignLeft="@+id/view3"
+        android:gravity="center_horizontal|center_vertical"
+        android:onClick="PossessoriClick"
+        android:text="Possessori"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <LinearLayout
+        android:id="@+id/viewQta"
+        android:layout_width="wrap_content"
+        android:layout_below="@+id/view1"
+        android:orientation="vertical"
+        android:layout_height="wrap_content" >
+    
+    <TextView
+        android:id="@+id/labelChiavi"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_gravity="center_horizontal"
+        android:text="Chiavi possedute"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <EditText
+	        android:id="@+id/qta"
+	        android:layout_width="60dp"
+	        android:ems="10"
+	        android:gravity="right"
+            android:layout_below="@+id/labelChiavi"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+        	android:inputType="number" />
+    </LinearLayout>
+    
+    <LinearLayout
+        android:id="@+id/viewStato"
+        android:layout_width="wrap_content"
+        android:layout_below="@+id/view1"
+        android:layout_toRightOf="@+id/viewQta"
+        android:orientation="vertical"
+        android:layout_height="wrap_content" >
+    
+     <TextView
+        android:id="@+id/labelStato"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:gravity="center_horizontal"
+        android:layout_gravity="center_horizontal"
+        android:text="Stato del portale"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+        
+        <Spinner
+           android:id="@+id/spinnerStato"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_alignTop="@+id/labelStato" />
+
+    </LinearLayout>
+        
+        <TextView
+           android:id="@+id/labelNote"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_centerHorizontal="true"
+           android:layout_below="@+id/view2"
+           android:gravity="center_vertical"
+           android:text="Note"
+           android:textAppearance="?android:attr/textAppearanceSmall" />
+
+       <EditText
+           android:id="@+id/editTextNote"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:layout_below="@+id/labelNote"
+           android:layout_marginTop="5dp"
+           android:layout_centerHorizontal="true"
+           android:ems="10"
+           android:inputType="textMultiLine" >
+
+           <requestFocus />
+       </EditText>
+       
 </RelativeLayout>
