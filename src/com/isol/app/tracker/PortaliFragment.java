@@ -102,16 +102,10 @@ public class PortaliFragment extends ListFragment {
 		
 	}
 
-//	public void ricaricaDati(Context context) {
-//		final ArrayList<InventarioItemModel> theList = getArrayList();
-//		MySimpleArrayAdapter theAdapter = (MySimpleArrayAdapter)getListAdapter();
-//		theAdapter.replaceData(theList);
-//		theAdapter.notifyDataSetChanged();
-//	}
-
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // Make sure the request was successful
+		super.onActivityResult(requestCode, resultCode, data);
+       // Make sure the request was successful
         if (resultCode == getActivity().RESULT_OK) {  
         	
         	//Verifico se si tratta di una ricarica
@@ -264,14 +258,14 @@ public class PortaliFragment extends ListFragment {
 			convertView.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
 //					//chiamo l'activity user_item
-					Intent intent = new Intent(getActivity(), PortalDetailActivity.class);
+					Intent intent = new Intent(context, PortalDetailActivity.class);
                     final int ind = v.getId();
                     int item_ID = values.get(ind).item_id;
 					int FlagItemLocation = values.get(ind).Flag_Item_Location;
 					intent.putExtra(Constants.PAR_ITEM_ID, item_ID);	
 					intent.putExtra(Constants.PAR_FLAG_ITEM_LOCATION, FlagItemLocation);	
 					intent.putExtra(Constants.PAR_ARRAY_INDEX, ind);	
-					startActivityForResult(intent,0);
+					startActivityForResult(intent,Constants.REQUEST_CODE_PORTAL_DETAIL);
 				}
 			});
 			

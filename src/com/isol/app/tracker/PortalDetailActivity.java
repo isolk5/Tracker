@@ -1,5 +1,6 @@
 package com.isol.app.tracker;
 
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +39,7 @@ public class PortalDetailActivity extends Activity {
 		TextView tvPortalName = (TextView) this.findViewById(R.id.portalName);
 		TextView tvPortalZone = (TextView) this.findViewById(R.id.portalZone);
 		EditText edQta = (EditText) this.findViewById(R.id.qta);
-		TextView tvNote = (TextView) this.findViewById(R.id.editTextNote);
+		EditText tvNote = (EditText) this.findViewById(R.id.editTextNote);
 		Spinner spStato = (Spinner) this.findViewById(R.id.spinnerStato);
 		
 		MyApplication myapp = MyApplication.getInstance();
@@ -137,6 +138,7 @@ public class PortalDetailActivity extends Activity {
         setResult(RESULT_OK, intent);
      }
 	
+	@SuppressWarnings("deprecation")
 	public void AggiornaClick() {
 		// TODO Auto-generated method stub
 		
@@ -154,7 +156,7 @@ public class PortalDetailActivity extends Activity {
 
 		Utilita.getJSONObjectFromArray("JSONInterface.aspx?function=Update&groupID="
 						+ myapp.getGroupID() + "&itemID=" + item_ID + "&personID=" + myapp.getPersonID()
-						+ "&FlagItemLocation=2&qta=" + sQta + "&Note=" + edNote.getText() + "&stato=" + spStato.getSelectedItemPosition());
+						+ "&FlagItemLocation=2&qta=" + sQta + "&Note=" + URLEncoder.encode(edNote.getText().toString()) + "&stato=" + spStato.getSelectedItemPosition());
 		
 		Context context = getApplicationContext();
 		CharSequence text = "Aggiornamento effettuato!";
@@ -173,6 +175,7 @@ public class PortalDetailActivity extends Activity {
         String sNote = edNote.getText().toString();
         intent.putExtra(Constants.PAR_ITEM_NOTE, sNote);
         setResult(RESULT_OK, intent);
+        finish();
 	}
 
 	@Override

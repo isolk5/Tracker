@@ -18,4 +18,6 @@ public class Constants {
     public static String serverAddress;
     public static int serverPort;
     public static String serviceURL;
+    
+    final static int REQUEST_CODE_PORTAL_DETAIL = 10;
 }

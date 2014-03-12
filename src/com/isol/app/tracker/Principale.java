@@ -124,7 +124,15 @@ public class Principale extends FragmentActivity implements ZoneListener {
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 	    // Make sure the request was successful
-        if (resultCode == RESULT_OK) {  
+		
+		//Stranamente nell'activity il request code non arriva come impostato nell'intent 
+		//invece di 10 arriva 65546
+		int fragmentindex = ( requestCode >> 16 );
+        if ( fragmentindex != 0 ) {
+            // Yes.  Pass it on...
+            super.onActivityResult( requestCode, resultCode, data );
+	        
+		} else if (resultCode == RESULT_OK) {  
         	String azione = data.getStringExtra(Constants.PAR_PORTAL_ADDED);
         	if (azione.equals("true")) {
         		flagUpdatePortalData = true;
