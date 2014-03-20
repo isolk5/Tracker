@@ -1,8 +1,6 @@
 package com.isol.app.tracker;
 
 import java.net.URLEncoder;
-import java.util.List;
-import java.util.Map;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,15 +12,14 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -84,17 +81,26 @@ public class PortalDetailActivity extends Activity {
 			tvNote.setEnabled(false);
 		}
 		
-		edQta.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				
-	           	EditText etxt = (EditText)v;
-            	etxt.setText("");
-			}
+//		edQta.setOnClickListener(new OnClickListener() {
+//			
+//			@Override
+//			public void onClick(View v) {
+//				// TODO Auto-generated method stub
+//				
+//	           	EditText etxt = (EditText)v;
+//            	etxt.setText("");
+//			}
+//		});
+//		
+		edQta.setOnFocusChangeListener(new OnFocusChangeListener() {
+		    @Override
+		    public void onFocusChange(View v, boolean hasFocus) {
+		        if(hasFocus) {
+		        	EditText etxt = (EditText)v;
+		        	etxt.setText("");
+		        }
+		    }
 		});
-		
 }
 
 	@Override
@@ -144,7 +150,7 @@ public class PortalDetailActivity extends Activity {
 		
 		EditText edQta = (EditText) this.findViewById(R.id.qta);
 		String sQta = edQta.getText().toString();
-		if (sQta=="")
+		if (sQta.equals(""))
 			sQta="0";
 
 		EditText edNote = (EditText)this.findViewById(R.id.editTextNote);
@@ -178,6 +184,17 @@ public class PortalDetailActivity extends Activity {
         finish();
 	}
 
+	public void AttaccoClick(View v) {
+		
+		MyApplication myapp = MyApplication.getInstance();
+		Intent intent = getIntent();		
+		int item_ID = intent.getIntExtra(Constants.PAR_ITEM_ID, 0);
+
+		Utilita.getJSONObjectFromArray("JSONInterface.aspx?function=Attack&groupID="
+						+ myapp.getGroupID() + "&portalID=" + item_ID + "&personID=" + myapp.getPersonID());
+
+	}
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == R.id.action_save) {

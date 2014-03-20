@@ -1,17 +1,21 @@
 package com.isol.app.tracker;
 
+import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.isol.app.tracker.PortaliFragment.InventarioItemModel;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.Menu;
@@ -33,6 +37,11 @@ public class AgentProfileActivity extends Activity {
 	public TextView tvNickname;
 	public int personZone;
 	
+	String SENDER_ID = "409806548300";
+	GoogleCloudMessaging gcm;
+	Context context;
+    String regid;
+    
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -72,10 +81,12 @@ public class AgentProfileActivity extends Activity {
 
 		String nickname = "";
 		int GroupID = 0;
+		int PersonID = 0;
 		
 		try {
 			 nickname = obj.getString("Person_Nickname");
 			 GroupID = obj.getInt("Group_ID");
+			 PersonID = obj.getInt("Person_ID");
 
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
@@ -84,8 +95,15 @@ public class AgentProfileActivity extends Activity {
 		
 		//Se gruppo e zona valorizzati e provengo dal signin, allora procedo con l'activity principale
 		if (GroupID != 0 && isFromSignin) {
+			
+			//Registrazione GCM
+			context = getApplicationContext();
+			myapp.setPersonID(PersonID);
+            registerInBackground();
+
 	    	Intent newIntent = new Intent(this, Principale.class);
 	    	startActivity(newIntent);
+	    	
 	    	//Tolgo la history a questa activity
 	    	finish();
 		}
@@ -218,6 +236,37 @@ public class AgentProfileActivity extends Activity {
 		
 	}
 	
+    private void registerInBackground() {
+        new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... params) {
+                String msg = "";
+                try {
+                    if (gcm == null) {
+                        gcm = GoogleCloudMessaging.getInstance(context);
+                    }
+                    regid = gcm.register(SENDER_ID);
+
+                    // You should send the registration ID to your server over HTTP, so it
+                    // can use GCM/HTTP or CCS to send messages to your app.
+            		//Questa chiamata censisce l'agente nel DB se non ancora presente
+            		MyApplication myapp = MyApplication.getInstance();
+            		JSONObject obj = Utilita
+            				.getJSONObject("JSONInterface.aspx?function=UpdateGCMRegid&personID="
+            						+ myapp.getPersonID() + "&regID=" + URLEncoder.encode(regid));
+
+                } catch (IOException ex) {
+                    msg = "Error :" + ex.getMessage();
+                    // If there is an error, don't just keep trying to register.
+                    // Require the user to click a button again, or perform
+                    // exponential back-off.
+                }
+                return msg;
+            }
+
+        }.execute(null, null, null);
+    }
+    
 	public class GroupItemModel {
 		public String groupDesc; 	
 		public int groupID;

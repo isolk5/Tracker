@@ -212,6 +212,7 @@ public class PortaliFragment extends ListFragment {
 				viewHolder.portalZone.setText(invItem.Portal_Zone);
 				viewHolder.qta.setText(Integer.toString(invItem.quantita));
 				viewHolder.FlagItemLocation = invItem.Flag_Item_Location;
+				viewHolder.imgStatoCarica.setImageResource(0);
 				
 				//Mostro l'immagine corretta per la carica
 				int imageResId = -1;

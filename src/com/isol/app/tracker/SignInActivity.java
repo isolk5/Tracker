@@ -71,18 +71,7 @@ public class SignInActivity extends Activity implements OnClickListener,
         super.onStart();
         mPlusClient.connect();
    
-//        //  GCM registration.
-//        if (mPlusClient.isConnected()) {
-//        	GoogleCloudMessaging  gcm = GoogleCloudMessaging.getInstance(this);
-//        	Context context = getApplicationContext();
-//        	
-//            String regid = gcm.register();
-//
-//            if (regid.isEmpty()) {
-//                registerInBackground();
-//            }
-//        }
-}
+    }
 
     @Override
     public void onStop() {
