@@ -40,4 +40,13 @@
     <string name="title_activity_new_portal">Nuovo Portale</string>
     <string name="hello_world">Hello world!</string>
 
+    <string-array name="portal_sort_entries">
+    <item>per nome</item>
+    <item>per zona / nome</item>
+    </string-array>
+    
+    <string-array name="portal_sort_values">
+    <item>1</item>
+    <item>2</item>
+    </string-array>
 </resources>

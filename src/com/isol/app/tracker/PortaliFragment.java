@@ -6,9 +6,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.R.color;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,9 +30,13 @@ import android.widget.TextView;
  * Activities containing this fragment MUST implement the {@link Callbacks}
  * interface.
  */
-public class PortaliFragment extends ListFragment {
+public class PortaliFragment extends ListFragment 
+implements OnSharedPreferenceChangeListener {
 
-	/**
+final String PORTAL_SORT_NAME = "1";
+final String PORTAL_SORT_ZONE = "2";	
+
+/**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
 	 * fragment (e.g. upon screen orientation changes).
 	 */
@@ -41,10 +50,16 @@ public class PortaliFragment extends ListFragment {
 		final ArrayList<InventarioItemModel> theList =getArrayList();
 		setListAdapter(new MySimpleArrayAdapter(getActivity(), theList));
 		
+		PreferenceManager.getDefaultSharedPreferences(getActivity())
+ 			.registerOnSharedPreferenceChangeListener(this);
 	}
 
 
 	public ArrayList<InventarioItemModel> getArrayList() {
+		
+		//Recupero i settings
+		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+		String portalSort = sharedPref.getString("pref_portal_sort","");
 		
 		// Ottengo l'inventario
 		MyApplication myapp = MyApplication.getInstance();
@@ -52,7 +67,7 @@ public class PortaliFragment extends ListFragment {
 		JSONArray jArr = Utilita
 				.getJSONArray("JSONInterface.aspx?function=GetPortals&groupID="
 						+ myapp.getGroupID() + "&personID="
-						+ myapp.getPersonID());
+						+ myapp.getPersonID() + "&sort=" + portalSort);
 
 		ArrayList<InventarioItemModel> theList = new ArrayList<InventarioItemModel>();
 
@@ -102,6 +117,13 @@ public class PortaliFragment extends ListFragment {
 		
 	}
 
+//	@Override
+//	public void onPause() {
+//	    super.onPause();
+//		PreferenceManager.getDefaultSharedPreferences(getActivity())
+//	            .unregisterOnSharedPreferenceChangeListener(this);
+//	}
+	
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -228,8 +250,14 @@ public class PortaliFragment extends ListFragment {
 					imageResId = R.drawable.pila4;
 				} 
 				
+				viewHolder.qta.setBackgroundColor(Color.parseColor("#DADADA"));
 				if (invItem.rating > 0) {
-					viewHolder.imgStatoCarica.setImageResource(imageResId);	
+					viewHolder.imgStatoCarica.setImageResource(imageResId);
+					viewHolder.imgStatoCarica.setAlpha(Color.parseColor("#DADADA"));
+					
+					if (invItem.quantita == 0) {
+						viewHolder.qta.setBackgroundColor(Color.parseColor("#E11C1C"));
+					}
 				}
 
 				viewHolder.imgChiave.setImageResource(R.drawable.chiave);
@@ -300,6 +328,39 @@ public class PortaliFragment extends ListFragment {
 		ImageView imgNote;
 		ImageView imgRating;
 		int FlagItemLocation;
+	}
+
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences sharedPref, String key) {
+		// TODO Auto-generated method stub
+		if (key.equals("pref_view_all_portals")) {
+			
+			Boolean value = sharedPref.getBoolean(key, false);
+			
+			//Invoco il servizio per modificare la preferenza sul server
+			MyApplication myapp = MyApplication.getInstance();
+
+			JSONArray jArr = Utilita
+					.getJSONArray("JSONInterface.aspx?function=ChangePreference"
+							+ "&personID=" + myapp.getPersonID()
+							+ "&key=" + key + "&value=" + value.toString());
+			
+			//Devo refreshare la lista
+        	MySimpleArrayAdapter theAdapter = (MySimpleArrayAdapter)getListAdapter();
+        	theAdapter.clear();
+        	theAdapter.addAll(getArrayList());
+        	theAdapter.notifyDataSetChanged();
+			
+		}
+		
+		if (key.equals("pref_portal_sort")) {
+			//Devo refreshare la lista
+        	MySimpleArrayAdapter theAdapter = (MySimpleArrayAdapter)getListAdapter();
+        	theAdapter.clear();
+        	theAdapter.addAll(getArrayList());
+        	theAdapter.notifyDataSetChanged();
+        	
+		}
 	}
 
 }

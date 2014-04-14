@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <PreferenceCategory
+            android:title="INTERFACCIA UTENTE">
+    
+    <ListPreference
+        android:key="pref_portal_sort"
+        android:title="Ordinamento Portali"
+        android:dialogTitle="Ordinamento Portali"
+        android:entries="@array/portal_sort_entries"
+        android:entryValues="@array/portal_sort_values"
+        android:defaultValue="2" />
+    
+    <CheckBoxPreference
+        android:key="pref_view_all_portals"
+        android:title="Visibilità portali"
+        android:summary="Per le zone di interesse visualizza anche i portali NON IMPORTANTI"
+        android:defaultValue="false" />
+    
+   </PreferenceCategory>
+
+     <PreferenceCategory
+            android:title="PARAMETRI TECNICI">
+    
     <EditTextPreference 
         android:title="Server Address" 
         android:key="pref_server" 
@@ -13,5 +35,6 @@
         android:defaultValue="80" 
         />
     
+   </PreferenceCategory>
 
 </PreferenceScreen>

@@ -142,11 +142,11 @@ public class ZoneFragment extends ListFragment {
 						.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				convertView = inflater.inflate(R.layout.zone_item, parent,
 						false);
-				TextView tvNick = (TextView) convertView
+				TextView tvZoneDesc = (TextView) convertView
 						.findViewById(R.id.zoneDesc);
 				CheckBox cbAss = (CheckBox) convertView.findViewById(R.id.cbZona);
 				viewHolder = new ViewHolderItem();
-				viewHolder.zoneDesc = tvNick;
+				viewHolder.zoneDesc = tvZoneDesc;
 				viewHolder.cbZona = cbAss;
 				
 				convertView.setTag(viewHolder);
@@ -162,6 +162,8 @@ public class ZoneFragment extends ListFragment {
 			if (invItem.isResponsible) {
 				viewHolder.cbZona.setEnabled(false);
 				viewHolder.zoneDesc.setText(invItem.zoneDesc + " (responsabile)");
+			} else {
+				viewHolder.cbZona.setEnabled(true);				
 			}
 			
 			viewHolder.cbZona.setId(position);			
